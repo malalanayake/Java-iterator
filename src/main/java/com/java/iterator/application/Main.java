@@ -29,6 +29,7 @@ public class Main {
         main.internalSelectiveAverageFunctor(myVector);
         main.externalSelectiveSumFunctor(myVector);
         main.externalSelectiveAverageFunctor(myVector);
+        main.selectiveIterable(myVector);
     }
 
     public void internalSumFunctor(MyVector<Integer> myVector) {
@@ -85,5 +86,13 @@ public class Main {
         Predicate<Integer> predicate = new PredicateImpl();
         util.doAll(functor, myVector.selectiveIterator(predicate));
         System.out.println("External Selective X>2 AverageFunctor:" + functor.getValue());
+    }
+    
+    public void selectiveIterable(MyVector<Integer> myVector) {
+        Predicate<Integer> predicate = new PredicateImpl();
+        System.out.println("Selective Iterable X>2");
+        for(Integer i:myVector.filter(predicate)){
+            System.out.print(" " + i);
+        }
     }
 }

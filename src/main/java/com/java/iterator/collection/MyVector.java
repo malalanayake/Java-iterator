@@ -11,14 +11,17 @@ import java.util.Vector;
  */
 public class MyVector<T> extends Vector<T> {
 
-    private Predicate<T> predicate;
-
     public MyVector() {
-        predicate = null;
+
     }
 
     public Iterator<T> selectiveIterator(Predicate<T> predicate) {
         return new IteratorSelective<T>(this, predicate);
+    }
+
+    public View filter(Predicate<T> predicate) {
+        View view = new View(this, predicate);
+        return view;
     }
 
     public <R> void doAll(Functor<T, R> functor) {
@@ -35,24 +38,6 @@ public class MyVector<T> extends Vector<T> {
             T t = iteratorSelective.next();
             functor.compute(t);
         }
-    }
-
-    public Predicate<T> getPredicate() {
-        return predicate;
-    }
-
-    public void setPredicate(Predicate<T> predicate) {
-        this.predicate = predicate;
-    }
-
-    /**
-     * This method is going to use in the for each
-     *
-     * @return
-     */
-    @Override
-    public synchronized Iterator<T> iterator() {
-        return this.selectiveIterator(predicate);
     }
 
     /**
@@ -100,5 +85,22 @@ public class MyVector<T> extends Vector<T> {
         public void remove() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
+    }
+
+    public class View implements Iterable<T> {
+
+        private Predicate<T> predicate;
+        private MyVector<T> myVector;
+
+        public View(MyVector<T> myVector, Predicate<T> predicate) {
+            this.predicate = predicate;
+            this.myVector = myVector;
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return myVector.selectiveIterator(predicate);
+        }
+
     }
 }
